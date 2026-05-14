@@ -1,0 +1,56 @@
+name: dokploy-node-worker
+version: 1.0.0
+
+registry:
+  username: ${DOKPLOY_USERNAME}
+  password: ${DOKPLOY_PASSWORD}
+
+build:
+  dockerfile_path: ./Dockerfile
+  context: ./
+
+containers:
+  - name: api
+    image: dokploy-node-worker-api
+    port: 3000
+    is_expose: true
+    gpu_enabled: false
+    env:
+      - name: REDIS_URL
+        value: ${REDIS_URL}
+      - name: PORT
+        value: "3000"
+
+  - name: worker
+    image: dokploy-node-worker-api
+    gpu_enabled: false
+    env:
+      - name: REDIS_URL
+        value: ${REDIS_URL}
+    command: ["node", "dist/worker.js"]
+
+domains:
+  - name: worker.example.com
+    https: true
+    port: 3000
+    only_https: false
+
+health_check:
+  enabled: true
+  path: /health
+  port: 3000
+
+resources:
+  memory_limit: 512M
+  memory_request: 256M
+  cpu_limit: 1
+  cpu_request: 0.5
+
+replicas:
+  min: 1
+  max: 2
+
+databases:
+  - name: redis
+    type: redis
+    default: true

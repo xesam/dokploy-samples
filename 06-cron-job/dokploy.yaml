@@ -1,0 +1,61 @@
+name: dokploy-cron-job
+version: 1.0.0
+
+registry:
+  username: ${DOKPLOY_USERNAME}
+  password: ${DOKPLOY_PASSWORD}
+
+build:
+  dockerfile_path: ./Dockerfile
+  context: ./
+
+containers:
+  - name: cron
+    image: dokploy-cron-job
+    gpu_enabled: false
+    is_cron: true
+    env:
+      - name: NODE_ENV
+        value: production
+      - name: LOG_LEVEL
+        value: info
+
+cron_jobs:
+  - name: heartbeat
+    schedule: "*/30 * * * *"
+    command: ["node", "dist/index.js"]
+    description: "每30秒发送心跳"
+    enabled: true
+
+  - name: dailyReport
+    schedule: "0 8 * * *"
+    command: ["node", "dist/index.js"]
+    description: "每天早上8点生成日报"
+    enabled: true
+
+  - name: cleanup
+    schedule: "0 2 * * *"
+    command: ["node", "dist/index.js"]
+    description: "每天凌晨2点清理"
+    enabled: true
+
+  - name: backup
+    schedule: "0 */6 * * *"
+    command: ["node", "dist/index.js"]
+    description: "每6小时备份数据"
+    enabled: true
+
+health_check:
+  enabled: true
+  path: /health
+  port: 3000
+
+resources:
+  memory_limit: 256M
+  memory_request: 128M
+  cpu_limit: 0.5
+  cpu_request: 0.25
+
+replicas:
+  min: 1
+  max: 1

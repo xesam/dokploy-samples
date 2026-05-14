@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokploy 示例 - 静态网站</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 欢迎使用 Dokploy</h1>
+            <p class="subtitle">这是一个部署在 Dokploy 上的静态网站示例</p>
+        </header>
+
+        <main>
+            <section class="info-card">
+                <h2>📦 项目信息</h2>
+                <ul id="projectInfo">
+                    <li>加载中...</li>
+                </ul>
+            </section>
+
+            <section class="features">
+                <h2>✨ Dokploy 支持的功能</h2>
+                <div class="feature-grid">
+                    <div class="feature-item">
+                        <span class="feature-icon">🌐</span>
+                        <h3>静态网站部署</h3>
+                        <p>支持纯 HTML/CSS/JS 网站托管</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔄</span>
+                        <h3>自动 HTTPS</h3>
+                        <p>自动配置 SSL 证书</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <h3>实时日志</h3>
+                        <p>查看部署和运行日志</p>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔧</span>
+                        <h3>自定义域名</h3>
+                        <p>绑定自己的域名</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="actions">
+                <h2>🧪 交互测试</h2>
+                <button id="fetchDataBtn">获取服务器信息</button>
+                <button id="clearCacheBtn">清除本地存储</button>
+                <div id="result" class="result-box"></div>
+            </section>
+        </main>
+
+        <footer>
+            <p>部署时间: <span id="deployTime">-</span></p>
+            <p>第 <span id="visitCount">0</span> 次访问</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

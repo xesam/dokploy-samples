@@ -1,0 +1,83 @@
+version: '3.8'
+
+services:
+  static-website:
+    build:
+      context: ./01-static-website
+      dockerfile: Dockerfile
+    ports:
+      - "3001:80"
+
+  nextjs-app:
+    build:
+      context: ./02-nextjs-app
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3002:3000"
+
+  express-api:
+    build:
+      context: ./03-express-postgres
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${POSTGRES_URL}
+      - NODE_ENV=production
+    depends_on:
+      - postgres
+    ports:
+      - "3003:3000"
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: dokploy_express
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  fastapi:
+    build:
+      context: ./04-fastapi-mongodb
+      dockerfile: Dockerfile
+    environment:
+      - MONGODB_URL=${MONGODB_URL:-mongodb://mongodb:27017}
+      - DATABASE_NAME=dokploy_fastapi
+    depends_on:
+      - mongodb
+    ports:
+      - "3004:8000"
+
+  mongodb:
+    image: mongo:7
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+
+  worker:
+    build:
+      context: ./05-node-worker
+      dockerfile: Dockerfile.worker
+    environment:
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379}
+    depends_on:
+      - redis
+    ports:
+      - "3005:3000"
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
